@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Social Media Automation Tool</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link href="https://fonts.googleapis.com/css2?family=Cardo&family=Cinzel+Decorative&family=Poppins&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+
+  <header class="header">
+    <a href="#" class="logo">
+      <img src="{{ url_for('static', filename='images/robot.png') }}" alt="robot" />
+      Professional Social Media Automation
+    </a>
+    <nav class="navbar">
+      <a href="#">ready</a>
+    </nav>
+  </header>
+
+  <div id="flash-center-wrapper">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <form method="POST" enctype="multipart/form-data" action="/upload">
+    <div class="container">
+
+      <!-- File Inputs -->
+      <div class="box file-box">
+        <!-- Folder and file inputs (unchanged) -->
+        <label class="input-folder-label"><i class='bx bxs-group'></i>
+          <input type="file" name="account_folder" id="account_file_input" style="display: none;" webkitdirectory
+            directory onchange="showFileName('account_file_input', 'account_file_display', 'account_file_icon')">
+          <div class="input-folder-wrapper">
+            <span id="account_file_icon" class="input-folder-icon" style="display:none;"><i
+                class='bx bxs-folder'></i></span>
+            <input type="text" id="account_file_display" placeholder="account folder" readonly>
+          </div>
+          <span class="cancel-icon"
+            onclick="clearFile('account_file_input', 'account_file_display', 'account_file_icon')">✖</span>
+          <button type="button" onclick="document.getElementById('account_file_input').click();">📂</button>
+        </label>
+
+        <label class="input-folder-label"><i class='bx bx-message-rounded-dots'></i>
+          <input type="file" name="comments_file" id="comment_file_input" style="display: none;"
+            onchange="showFileName('comment_file_input', 'comment_file_display', 'comment_file_icon')">
+          <div class="input-folder-wrapper">
+            <span id="comment_file_icon" class="input-folder-icon" style="display:none;"><i
+                class='bx bxs-folder'></i></span>
+            <input type="text" id="comment_file_display" placeholder="comment file" readonly>
+          </div>
+          <span class="cancel-icon"
+            onclick="clearFile('comment_file_input', 'comment_file_display', 'comment_file_icon')">✖</span>
+          <button type="button" onclick="document.getElementById('comment_file_input').click();">📂</button>
+        </label>
+
+        <label class="input-folder-label"><i class='bx bx-globe'></i>
+          <input type="file" name="proxies_file" id="proxies_file_input" style="display: none;"
+            onchange="showFileName('proxies_file_input', 'proxies_file_display', 'proxies_file_icon')">
+          <div class="input-folder-wrapper">
+            <span id="proxies_file_icon" class="input-folder-icon" style="display:none;"><i
+                class='bx bxs-folder'></i></span>
+            <input type="text" id="proxies_file_display" placeholder="proxies file" readonly>
+          </div>
+          <span class="cancel-icon"
+            onclick="clearFile('proxies_file_input', 'proxies_file_display', 'proxies_file_icon')">✖</span>
+          <button type="button" onclick="document.getElementById('proxies_file_input').click();">📂</button>
+        </label>
+
+        <label class="input-folder-label"><i class='bx bx-podcast'></i>
+          <input type="file" name="posts_file" id="post_file_input" style="display: none;"
+            onchange="showFileName('post_file_input', 'post_file_display', 'post_file_icon')">
+          <div class="input-folder-wrapper">
+            <span id="post_file_icon" class="input-folder-icon" style="display:none;"><i
+                class='bx bxs-folder'></i></span>
+            <input type="text" id="post_file_display" placeholder="post file" readonly>
+          </div>
+          <span class="cancel-icon"
+            onclick="clearFile('post_file_input', 'post_file_display', 'post_file_icon')">✖</span>
+          <button type="button" onclick="document.getElementById('post_file_input').click();">📂</button>
+        </label>
+
+        <label class="input-folder-label"><i class='bx bxs-user'></i>
+          <input type="file" name="single_account_file" id="single_account_file_input" style="display: none;"
+            onchange="showFileName('single_account_file_input', 'single_account_file_display', 'single_account_file_icon')">
+          <div class="input-folder-wrapper">
+            <span id="single_account_file_icon" class="input-folder-icon" style="display:none;"><i class='bx bxs-folder'></i></span>
+            <input type="text" id="single_account_file_display" placeholder="single account file" readonly>
+          </div>
+          <span class="cancel-icon"
+            onclick="clearFile('single_account_file_input', 'single_account_file_display', 'single_account_file_icon')">✖</span>
+          <button type="button" onclick="document.getElementById('single_account_file_input').click();">📂</button>
+        </label>
+      </div>
+
+      <!-- Stats -->
+      <div class="box stats-box">
+        <div class="grid">
+          <div class="card"><i class='bx bxs-group'></i>
+            <p>Total Accounts: <span id="total-accounts-card">{{ stats.accounts }}</span></p>
+          </div>
+          <div class="card"><i class='bx bx-message-rounded-dots'></i>
+            <p>Comment Template: {{ stats.comments }}</p>
+          </div>
+          <div class="card"><i class='bx bx-podcast'></i>
+            <p>Target Post: {{ stats.posts }}</p>
+          </div>
+          <div class="card">✅<p>Success Rate: <span id="success-rate-card">{{ stats.success_rate }}%</span></p>
+          </div>
+          <div class="card"><i class='bx bx-refresh'></i>
+            <p>Progress: <span id="progress-card">{{ stats.progress }}</span></p>
+          </div>
+          <div class="card"><i class='bx bx-globe'></i>
+            <p>Proxy: {{ stats.proxies }}</p>
+          </div>
+        </div>
+      </div>
+  </form>
+  </div>
+
+
+  <div class="data-wrapper">
+    <div class="data-controls-row">
+      <div class="field-group">
+        <label for="category-dropdown">Category</label>
+        <select name="category" id="category-dropdown">
+          <option value="login">Login</option>
+          <option value="comment">Comment</option>
+          <option value="like">Like Posts</option>
+          <option value="follow">Follow Users</option>
+          <option value="unfollow">Unfollow Users</option>
+          <option value="share">Share Posts</option>
+          <option value="message">Send Messages</option>
+          <option value="join-group">Join Groups</option>
+          <option value="leave-group">Leave Groups</option>
+          <option value="scrape-data">Scrape Data</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label for="format-dropdown">Select Format</label>
+        <select name="format" id="format-dropdown">
+          <option value="email">Email</option>
+          <option value="cookies">Cookies</option>
+          <option value="phone">Phone</option>
+          <option value="idtiktok">idtiktok</option>
+          <option value="recoveryemail">recoveryemail</option>
+          <option value="privatekey">privatekey</option>
+          <option value="recoverymail">RecoveryEmail</option>
+        </select>
+      </div>
+
+      <div class="field-group wide-input">
+        <label for="format-input">Input Format</label>
+        <input type="text" id="format-input" name="format_input"
+          placeholder="Enter target users, groups, or content here...">
+      </div>
+    </div>
+
+
+    <div class="data-table-area">
+      <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; color: #333;">📊 Account Table</h3>
+        <button type="button" onclick="clearAllAccounts()"
+          style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+          🗑️ Clear Table
+        </button>
+      </div>
+      <table class="user-accounts-table">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Username</th>
+            <th>Account File</th>
+            <th>Private Key</th>
+            <th>Cookies</th>
+            <th>Email</th>
+            <th>Mail Password</th>
+            <th>Phone</th>
+            <th>Recovery Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for acc in accounts_table %}
+          <tr>
+            <td>{{ acc.no }}</td>
+            <td>{{ acc.username }}</td>
+            <td>
+              <a href="{{ url_for('download_account_file', filename=acc.filename) }}" target="_blank">
+                {{ acc.filename }}
+              </a>
+            </td>
+            <td>{{ acc.privatekey }}</td>
+            <td>{{ acc.cookies }}</td>
+            <td>{{ acc.email }}</td>
+            <td>{{ acc.passmail }}</td>
+            <td>{{ acc.phone }}</td>
+            <td>{{ acc.recoverymail }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+
+
+    <div class="bottom-card-row">
+
+      <div class="card-box">
+        <div class="container1">
+          <div class="settings-row">
+            <label><i class='bx bx-globe'></i> Proxy</label>
+            <label class="headless-label">
+              <i class='bx bx-hard-hat'></i>Headless
+              <input type="checkbox" name="headless" checked>
+            </label>
+            <label><i class='bx bxl-facebook'></i> Platform
+              <select name="platform" id="platform-select">
+                <option value="facebook">Facebook</option>
+                <option value="instagram">Instagram</option>
+                <option value="tiktok">TikTok</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="settings-row">
+            <label>Threads
+              <input type="number" name="threads" value="1" min="1" max="10" id="threads-input">
+            </label>
+
+            <label><i class='bx bx-bar-chart-alt-2'></i> Strategy
+              <select name="strategy">
+                <option value="random">Random</option>
+                <option value="round_robin">Round Robin</option>
+                <option value="sequential">Sequential</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="settings-row">
+            <label><i class='bx bx-user'></i> @someone:
+              <input type="text" name="mention">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Runtime Log Card -->
+      <div class="card-box">
+        <div class="section">
+          <h3>🧪 Runtime Log</h3>
+          <div id="runtime-status-info">Status: {{ stats.status }}</div>
+          <button type="button" onclick="saveLog()">💾 Save</button>
+          <button type="button" onclick="clearLog()">🧹 Clear</button>
+          <textarea id="log-output" rows="10" placeholder="Log output will appear here...">{{ log_content }}</textarea>
+        </div>
+      </div>
+    </div>
+    <!-- ✅ END NEW FLEX SECTION -->
+
+
+
+
+
+
+    <div class="section1">
+      <button type="button" class="start-btn" id="start-btn"><i class='bx bx-rocket'></i> Start</button>
+      <button type="button" class="stop-btn" id="stop-btn"><i class='bx bx-stop-circle'></i> Stop</button>
+    </div>
+
+    <!-- Upload Button -->
+    <div class="box upload-box">
+      <button type="submit" class="upload-btn">⬆️ Upload Files</button>
+    </div>
+  </div>
+  </form>
+
+  <script src="{{url_for ('static', filename= 'js/script.js')}}"></script>
+</body>
+
+</html>

@@ -1,0 +1,6 @@
+username:jane_doe
+password:password456
+email:jane@example.com
+cookies:[{"name":"sessionid","value":"def456"}]
+phone:0987654321
+recoverymail:recovery2@example.com

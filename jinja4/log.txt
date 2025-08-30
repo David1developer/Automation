@@ -1,0 +1,6 @@
+Checked file: account1.txt | Username: jane_doe | Password: password456
+Valid accounts found: ['account1.txt']
+Starting automation with Category: login, Format: email, Platform: facebook
+Processing account 1/1: account1.txt
+Action: login on facebook using email authentication
+Fatal error: Could not reach host. Are you offline?

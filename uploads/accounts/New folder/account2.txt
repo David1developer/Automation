@@ -1,0 +1,6 @@
+username:john_smith
+password:superpass789
+email:john@example.com
+cookies:[{"name":"sessionid","value":"abc789"}]
+phone:1231231234
+recoverymail:recoveryjohn@example.com
